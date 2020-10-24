@@ -3,7 +3,7 @@ import csv
 from datetime import datetime
 
 
-class CSV():
+class Csv():
     """
     Csv class will read an existing CSV file in,
     convert the data into list of dicts and clean it.
@@ -20,7 +20,9 @@ class CSV():
 
     def clean_csv(self):
         """Cleaning csv file."""
-        for row in self.read_csv():
+        list_of_data = self.read_csv()
+
+        for row in list_of_data:
             # converting csvfile to DictReader object cleaned '"' automatically
             # cleaning it just in case
             if '"' in row['product_name']:
@@ -38,3 +40,4 @@ class CSV():
 
             # converting date_updated to datetime
             row['date_updated'] = datetime.strptime(row['date_updated'], '%m/%d/%Y').date()
+        return list_of_data

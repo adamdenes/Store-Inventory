@@ -39,5 +39,7 @@ class Csv():
             row['product_price'] = int(row['product_price'])
 
             # converting date_updated to datetime
-            row['date_updated'] = datetime.strptime(row['date_updated'], '%m/%d/%Y').date()
+            row['date_updated'] = datetime.strptime(
+                row['date_updated'], '%m/%d/%Y').date()
+
         return list_of_data

@@ -43,3 +43,29 @@ class Csv():
                 row['date_updated'], '%m/%d/%Y').date()
 
         return list_of_data
+
+
+    def write_csv(self, output):
+        """
+        Writing data into a csv file.
+        Data type conversion is skipped due to compatibility,
+        so it can be imported back without extra converison.
+        """
+        csv_name = self.file_name.split('.')
+        backup = csv_name[0] + datetime.now().strftime('_%Y-%m-%d_%H:%M:%S.') + csv_name[1]
+
+        with open(backup, encoding='utf-8', mode='w') as csvfile:
+            print('Starting backup process...')
+            fieldnames = []
+            for rows in list(output):
+                for key in rows.keys():
+                    if key not in fieldnames:
+                        fieldnames.append(key)
+
+            csvwriter = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            csvwriter.writeheader()
+
+            for row in list(output):
+                csvwriter.writerow(row)
+            
+            print("Backup finished!")

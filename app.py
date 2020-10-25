@@ -27,7 +27,8 @@ def import_csv():
     # to speed up process
     with db.atomic():
         for data in cleaned_csv:
-            Product.insert_many(data).execute()
+            # if data already exist, do not add extra rows
+            Product.get_or_create(**data)
 
 
 def initialize():
@@ -35,6 +36,43 @@ def initialize():
     db.create_tables([Product], safe=True)
 
 
+def menu():
+    menu_choices = OrderedDict([
+        ('a', add_record),
+        ('v', view_record),
+        ('b', backup_data)
+    ])
+
+    option = None
+
+    while option != 'q':
+        print('\nEnter "q" to quit!')
+
+        for choice, operation in menu_choices.items():
+            print(f'{choice} -> {operation.__doc__}')
+
+        option = input('Option: ').lower().strip()
+
+        if option in menu_choices:
+            menu_choices[option]()
+
+
+def add_record():
+    """Add a record to the database"""
+    pass
+
+
+def view_record():
+    """View a database record"""
+    pass
+
+
+def backup_data():
+    """Backup database"""
+    pass
+
+
 if __name__ == '__main__':
     initialize()
     import_csv()
+    menu()

@@ -103,7 +103,8 @@ def add_record():
                         raise ValueError(
                             f'Numbers are not allowed for {answer}!')
                     elif re.match(r'[^\w_]', input_data, re.I):
-                        raise ValueError(f'Only characters are accepted for {answer}!')
+                        raise ValueError(
+                            f'Only characters are accepted for {answer}!')
                     else:
                         answers.append(input_data)
                         break

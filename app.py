@@ -60,6 +60,7 @@ def menu():
 
             try:
                 option = input('Option: ').lower().strip()
+                clear()
 
                 if option not in ['a', 'b', 'v']:
                     raise ValueError(
@@ -71,6 +72,9 @@ def menu():
             if option in menu_choices:
                 menu_choices[option]()
 
+    except EOFError:
+        print('\n\nApplication stoped with ctrl+d.\n\n')
+        sys.exit()
     except KeyboardInterrupt:
         print(f'\n\nClosed application.\n\n')
         sys.exit()
@@ -88,23 +92,25 @@ def view_record():
             record_id = input('Enter the product id: ')
 
             if re.match(r'[a-z\s]+', record_id, re.I):
-                raise ValueError('\nOnly integers allowed!')
+                raise ValueError('Only integers allowed!')
             elif re.match(r'-\d+', record_id):
-                raise ValueError('\nNegative numbers are not allowed!')
+                raise ValueError('Negative numbers are not allowed!')
             elif '.' in record_id:
-                raise ValueError('\nDecimal numbers are not allowed!')
-            elif re.match(r'[^\w]+', record_id, re.I):
-                raise ValueError('\nSymbols are not allowed!')
+                raise ValueError('Decimal numbers are not allowed!')
+            elif re.match(r'[^\w_]+', record_id, re.I):
+                raise ValueError('Symbols are not allowed!')
             else:
                 break
 
         except ValueError as ve:
+            clear()
             print(f'{ve} You have entered "{record_id}".')
             continue
 
     record = Product.select().where(Product.product_id == int(record_id))
 
     if not record.exists():
+        clear()
         print('Not found in database!')
     else:
         clear()
@@ -124,4 +130,5 @@ def backup_data():
 if __name__ == '__main__':
     initialize()
     import_csv()
+    clear()
     menu()

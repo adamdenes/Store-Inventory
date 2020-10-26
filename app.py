@@ -63,7 +63,7 @@ def menu():
                 option = input('Option: ').lower().strip()
                 clear()
 
-                if option not in ['a', 'b', 'v']:
+                if option not in ['a', 'b', 'v', 'q']:
                     raise ValueError(
                         'Please use the available options! ["a", "v", "b"]')
 
@@ -120,7 +120,7 @@ def add_record():
                         raise ValueError(
                             f'Only numbers are accepted for {answer}!')
                     else:
-                        input_data = re.sub(r'\W+', '', input_data)
+                        input_data = int(float(input_data) * 100)
                         answers.append(int(input_data))
                         break
             except ValueError as ve:
@@ -131,7 +131,28 @@ def add_record():
     new_data = dict(zip(first_row[1:], answers))
 
     with db.atomic():
-        Product.create(**new_data)
+        check_duplicate = Product.get_or_none(product_name=new_data['product_name'])
+
+        # check if product name is in db
+        if check_duplicate is not None:
+            print(f"*** Warning *** {new_data['product_name']} is duplicate!")
+            old_record = Product.select().dicts().where(Product.product_id == check_duplicate)
+
+            updated_data = {}
+            for data in list(old_record):
+                for k, v in data.items():
+                    if k == 'product_id':
+                        continue
+                    updated_data[k] = v
+
+            print(f'''
+            Updating from {updated_data}
+            to {new_data}
+            ''')
+            Product.update(**new_data).where(Product.product_id == check_duplicate).execute()
+
+        else:
+            Product.create(**new_data)
 
 
 def view_record():
@@ -142,16 +163,16 @@ def view_record():
 
             for letter in record_id:
                 if re.match(r'\D', letter, re.I):
-                    raise ValueError('Only positive integers allowed!')
+                    raise ValueError(f'Only positive integers allowed! You have entered "{record_id}".')
 
             if record_id == '':
-                raise ValueError('You have entered an empty string!')
+                raise ValueError(f'You have entered an empty string! You have entered "{record_id}".')
             else:
                 break
 
         except ValueError as ve:
             clear()
-            print(f'{ve} You have entered "{record_id}".')
+            print(ve)
             continue
 
     record = Product.select().where(Product.product_id == int(record_id))

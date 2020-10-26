@@ -140,14 +140,12 @@ def view_record():
         try:
             record_id = input('Enter the product id: ')
 
-            if re.match(r'[a-z\s]+', record_id, re.I):
-                raise ValueError('Only integers allowed!')
-            elif re.match(r'-\d+', record_id):
-                raise ValueError('Negative numbers are not allowed!')
-            elif '.' in record_id:
-                raise ValueError('Decimal numbers are not allowed!')
-            elif re.match(r'[^\w_]+', record_id, re.I):
-                raise ValueError('Symbols are not allowed!')
+            for letter in record_id:
+                if re.match(r'\D', letter, re.I):
+                    raise ValueError('Only positive integers allowed!')
+
+            if record_id == '':
+                raise ValueError('Only positive integers allowed!')
             else:
                 break
 

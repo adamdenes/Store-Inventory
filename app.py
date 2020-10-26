@@ -145,7 +145,7 @@ def view_record():
                     raise ValueError('Only positive integers allowed!')
 
             if record_id == '':
-                raise ValueError('Only positive integers allowed!')
+                raise ValueError('You have entered an empty string!')
             else:
                 break
 

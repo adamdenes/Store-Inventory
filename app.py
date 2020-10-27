@@ -61,7 +61,11 @@ def import_csv():
     with db.atomic():
         # if data already exist, do not add extra rows
         for data in cleaned_csv:
-            Product.get_or_create(**data)
+            existing = Product.get_or_none(product_name=data['product_name'])
+            if existing is not None:
+                continue
+            else:
+                Product.create(**data)
 
 
 def initialize():
@@ -157,7 +161,7 @@ def add_record():
                 print(ve)
                 continue
 
-    answers.append(datetime.datetime.date(datetime.datetime.now()))
+    answers.append(datetime.datetime.now())
     new_data = dict(zip(first_row[1:], answers))
 
     with db.atomic():
@@ -234,5 +238,5 @@ def backup_data():
 if __name__ == '__main__':
     initialize()
     import_csv()
-    clear()
+    # clear()
     menu()

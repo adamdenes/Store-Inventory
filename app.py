@@ -22,15 +22,45 @@ class Product(Model):
         database = db
 
 
+def duplicates(data_list):
+    prod_list = []
+    duplicate_list = []
+
+    for dicts in data_list:
+        counter = 0
+
+        if dicts not in prod_list:
+            prod_list.append(dicts)
+
+            for p in prod_list:
+                if dicts['product_name'] == p['product_name']:
+                    counter += 1
+
+        if counter > 1:
+            prod_list.remove(p)
+            duplicate_list.append(dicts)
+
+    for p in prod_list:
+        for d in duplicate_list:
+            if p['product_name'] == d['product_name']:
+                if p['date_updated'] > d['date_updated']:
+                    p.update(p)
+                else:
+                    p.update(d)
+
+    return prod_list
+
+
 def import_csv():
     csv_obj = Csv('inventory.csv')
-    cleaned_csv = csv_obj.clean_csv()
+    to_be_filtered = csv_obj.clean_csv()
+    cleaned_csv = duplicates(to_be_filtered)
 
     # wrapping bulk insert transaction with atomic()
     # to speed up process
     with db.atomic():
+        # if data already exist, do not add extra rows
         for data in cleaned_csv:
-            # if data already exist, do not add extra rows
             Product.get_or_create(**data)
 
 
@@ -127,16 +157,18 @@ def add_record():
                 print(ve)
                 continue
 
-    answers.append(datetime.datetime.now())
+    answers.append(datetime.datetime.date(datetime.datetime.now()))
     new_data = dict(zip(first_row[1:], answers))
 
     with db.atomic():
-        check_duplicate = Product.get_or_none(product_name=new_data['product_name'])
+        check_duplicate = Product.get_or_none(
+            product_name=new_data['product_name'])
 
         # check if product name is in db
         if check_duplicate is not None:
             print(f"*** Warning *** {new_data['product_name']} is duplicate!")
-            old_record = Product.select().dicts().where(Product.product_id == check_duplicate)
+            old_record = Product.select().dicts().where(
+                Product.product_id == check_duplicate)
 
             updated_data = {}
             for data in list(old_record):
@@ -149,7 +181,8 @@ def add_record():
             Updating from {updated_data}
             to {new_data}
             ''')
-            Product.update(**new_data).where(Product.product_id == check_duplicate).execute()
+            Product.update(**new_data).where(Product.product_id ==
+                                             check_duplicate).execute()
 
         else:
             Product.create(**new_data)
@@ -163,10 +196,12 @@ def view_record():
 
             for letter in record_id:
                 if re.match(r'\D', letter, re.I):
-                    raise ValueError(f'Only positive integers allowed! You have entered "{record_id}".')
+                    raise ValueError(
+                        f'Only positive integers allowed! You have entered "{record_id}".')
 
             if record_id == '':
-                raise ValueError(f'You have entered an empty string! You have entered "{record_id}".')
+                raise ValueError(
+                    f'You have entered an empty string! You have entered "{record_id}".')
             else:
                 break
 

@@ -44,7 +44,6 @@ class Csv():
 
         return list_of_data
 
-
     def write_csv(self, output):
         """
         Writing data into a csv file.
@@ -52,7 +51,8 @@ class Csv():
         so it can be imported back without extra converison.
         """
         csv_name = self.file_name.split('.')
-        backup = csv_name[0] + datetime.now().strftime('_%Y-%m-%d_%H:%M:%S.') + csv_name[1]
+        backup = csv_name[0] + \
+            datetime.now().strftime('_%Y-%m-%d_%H:%M:%S.') + csv_name[1]
 
         with open(backup, encoding='utf-8', mode='w') as csvfile:
             print('Starting backup process...')
@@ -67,5 +67,5 @@ class Csv():
 
             for row in list(output):
                 csvwriter.writerow(row)
-            
+
             print('Backup finished!')

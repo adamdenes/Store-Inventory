@@ -26,7 +26,7 @@ class Csv():
             # converting csvfile to DictReader object cleaned '"' automatically
             # cleaning it just in case
             if '"' in row['product_name']:
-                row['product_name'].replace('"', '')
+                row['product_name'] = row['product_name'].replace('"', '')
 
             # converting dollar to pure cents
             if re.match(r'\W+', row['product_price']):

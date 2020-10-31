@@ -221,11 +221,22 @@ def view_record():
         print('Not found in database!')
     else:
         clear()
+        col_names = []
+        for rows in list(Product.select().dicts()):
+            for key in rows.keys():
+                if key not in col_names:
+                    col_names.append(key)
+        
+        print('+' * 100)
+        for col in col_names:
+            print('\t' + col, end='')
+
+        print()
         for data in record:
             data.date_updated = data.date_updated.strftime('%m/%d/%Y')
             print('+' * 100)
             print(
-                f'\n{data.product_id}\t | \t{data.product_name}\t | \t{data.product_quantity}\t | \t{data.product_price}\t | \t{data.date_updated}\n')
+                f'\n\t{data.product_id}\t | \t{data.product_name}\t | \t{data.product_quantity}\t | \t{data.product_price}\t | \t{data.date_updated}\n')
             print('+' * 100)
 
 

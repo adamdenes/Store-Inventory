@@ -227,17 +227,20 @@ def view_record():
                 if key not in col_names:
                     col_names.append(key)
         
-        print('+' * 100)
+        print('-' * 110)
         for col in col_names:
-            print('\t' + col, end='')
+            print('{:<22s}'.format(col), end=' ')
 
         print()
         for data in record:
             data.date_updated = data.date_updated.strftime('%m/%d/%Y')
-            print('+' * 100)
-            print(
-                f'\n\t{data.product_id}\t | \t{data.product_name}\t | \t{data.product_quantity}\t | \t{data.product_price}\t | \t{data.date_updated}\n')
-            print('+' * 100)
+            print('-' * 110)
+            print('{:<15d} {:<35s} {:<20d} {:<20d} {:20s}'.format(
+                data.product_id, data.product_name, data.product_quantity, data.product_price, data.date_updated)
+            )
+            # print(
+            #     f'\n{data.product_id}\t | \t{data.product_name}\t | \t{data.product_quantity}\t | \t{data.product_price}\t | \t{data.date_updated}\n')
+            print('-' * 110)
 
 
 def backup_data():

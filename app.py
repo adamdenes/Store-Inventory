@@ -226,7 +226,7 @@ def view_record():
             for key in rows.keys():
                 if key not in col_names:
                     col_names.append(key)
-        
+
         print('-' * 110)
         for col in col_names:
             print('{:<22s}'.format(col), end=' ')
